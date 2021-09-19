@@ -2,12 +2,19 @@
 
 
 const express = require("express");
+const morgan = require("morgan");
+
+
 
 const app = express();
 const ExpressError = require("./expressError")
 
-app.use(express.json());
 
+app.use(express.json());
+app.use(morgan('dev'));
+
+const companiesRoutes = require("./routes/companies");
+app.use("/companies", companiesRoutes);
 
 /** 404 handler */
 
