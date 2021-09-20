@@ -1,4 +1,5 @@
 
+const { request } = require("express");
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
@@ -48,6 +49,15 @@ router.put('/:code', async (req, res, next) => {
         }
         const company = results.rows[0]
         return res.json({"company": company})
+    } catch(e) {
+        return next(e);
+    }
+})
+
+router.delete('/:code', async (req, res, next) => {
+    try {
+        const results = await db.query('DELETE FROM companies WHERE id= $1', [request.params.id]);
+        return res.send({ status: "Company Deleted" })
     } catch(e) {
         return next(e);
     }
