@@ -16,6 +16,9 @@ app.use(morgan('dev'));
 const companiesRoutes = require("./routes/companies");
 app.use("/companies", companiesRoutes);
 
+const invoicesRoutes = require("./routes/invoices");
+app.use("/invoices", invoicesRoutes);
+
 /** 404 handler */
 
 app.use(function(req, res, next) {
