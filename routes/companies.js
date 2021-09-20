@@ -18,11 +18,17 @@ router.get('/', async (req, res, next) => {
 router.get('/:code', async (req, res, next) => {
     try {
         const code = req.params.code;
-        const results = await db.query("SELECT code, name, description FROM companies WHERE code = $1", [code]);
-        if (results.rows.length === 0) {
+        const compResults = await db.query("SELECT code, name, description FROM companies WHERE code = $1", [code]);
+        if (compResults.rows.length === 0) {
             throw new ExpressError(`Unable to find a company with code of ${code}`, 404)
         }
-        const company = results.rows[0]
+        const invoiceResults = await db.query("SELECT id FROM invoices WHERE comp_code = $1", [code])
+
+        const company = compResults.rows[0];
+        const invoices = invoiceResults.rows;
+
+        company.invoices = invoices.map(inv => inv.id)
+
         return res.json({"company": company})
     } catch(e) {
         return next(e);
@@ -56,7 +62,7 @@ router.put('/:code', async (req, res, next) => {
 
 router.delete('/:code', async (req, res, next) => {
     try {
-        const results = await db.query('DELETE FROM companies WHERE id= $1', [request.params.id]);
+        await db.query('DELETE FROM companies WHERE id= $1', [request.params.code]);
         return res.send({ status: "Company Deleted" })
     } catch(e) {
         return next(e);
